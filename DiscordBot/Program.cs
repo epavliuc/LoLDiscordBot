@@ -24,7 +24,7 @@ namespace DiscordBot
             handler = new CommandHandler(client, service);
             client.Log += Log;
 
-            var token = "NDM3OTQ2NjU3MjU1MDYzNTUy.XeVOdA.ANI6MdxRVCAe_ebcGasPfcREVyM";
+            var token = System.IO.File.ReadAllText("C:\\Users\\Edd\\Desktop\\DiscordKey.txt");
 
 
             await handler.InstallCommandsAsync();
