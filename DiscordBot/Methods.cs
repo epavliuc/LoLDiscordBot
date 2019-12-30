@@ -32,5 +32,22 @@ namespace DiscordBot
                 return JsonConvert.DeserializeObject<List<LoLLeagueEntryModel>>(content);
             }
         }
+
+        public static async Task<LoLCurrentGameModel> LoLCurrentGameAsync(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("X-Riot-Token", ApiConfig.ApiKey);
+                try
+                {
+                    var content = await client.GetStringAsync(ApiConfig.CurrentGameApiUrl + id);
+                    return JsonConvert.DeserializeObject<LoLCurrentGameModel>(content);
+                }
+                catch
+                {
+                    return await Task.FromResult<LoLCurrentGameModel>(null);
+                }
+            }
+        }
     }
 }
