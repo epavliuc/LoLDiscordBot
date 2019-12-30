@@ -18,8 +18,16 @@ namespace DiscordBot
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("X-Riot-Token", ApiConfig.ApiKey);
-                var content = await client.GetStringAsync(ApiConfig.SummonerApiUrl + name);
-                return JsonConvert.DeserializeObject<LoLSummonerModel>(content);
+                try
+                {
+                    var content = await client.GetStringAsync(ApiConfig.SummonerApiUrl + name);
+                    return JsonConvert.DeserializeObject<LoLSummonerModel>(content);
+                }
+                catch
+                {
+                    return await Task.FromResult<LoLSummonerModel>(null);
+                }
+                
             }
         }
 
@@ -28,8 +36,16 @@ namespace DiscordBot
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("X-Riot-Token", ApiConfig.ApiKey);
-                var content = await client.GetStringAsync(ApiConfig.LeagueEntryApiUrl + id);
-                return JsonConvert.DeserializeObject<List<LoLLeagueEntryModel>>(content);
+                try
+                {
+                    var content = await client.GetStringAsync(ApiConfig.LeagueEntryApiUrl + id);
+                    return JsonConvert.DeserializeObject<List<LoLLeagueEntryModel>>(content);
+                }
+                catch
+                {
+                    return await Task.FromResult<List<LoLLeagueEntryModel>>(null);
+                }
+                
             }
         }
 

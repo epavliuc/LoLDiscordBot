@@ -21,13 +21,20 @@ namespace DiscordBot
         public async Task Player([Remainder]string query)
         {         
             var LoLSummonerModel = await Methods.LoLSummonerAsync(query);
-            var LoLLeagueEntry = await Methods.LoLSummonerEntryAsync(LoLSummonerModel.id);
+            
+            if (LoLSummonerModel == null)
+            {
+                await ReplyAsync("```No such player```");
+            }
+            else
+            {
+                var LoLLeagueEntry = await Methods.LoLSummonerEntryAsync(LoLSummonerModel.id);
+                string Level = string.Format("Level: {0}", LoLSummonerModel.summonerLevel);
+                string SoloRank = string.Format("Solo Rank: {0} {1}", LoLLeagueEntry[1].tier, LoLLeagueEntry[1].rank);
+                string FlexRank = string.Format("Flex Rank: {0} {1}", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank);
 
-            string Level = string.Format("Level: {0}", LoLSummonerModel.summonerLevel);
-            string SoloRank = string.Format("Solo Rank: {0} {1}", LoLLeagueEntry[1].tier,LoLLeagueEntry[1].rank);
-            string FlexRank = string.Format("Flex Rank: {0} {1}", LoLLeagueEntry[0].tier,LoLLeagueEntry[0].rank);
-
-            await ReplyAsync(":"+"\n"+Level+"\n"+SoloRank+"\n"+FlexRank);
+                await ReplyAsync($"```{Level}\n{SoloRank}\n{FlexRank}```");
+            }
         }
 
         [Command("current",RunMode = RunMode.Async)]
@@ -39,7 +46,7 @@ namespace DiscordBot
          
             if (LoLCurrentGame == null)
             {
-                await ReplyAsync("Player not in a game");
+                await ReplyAsync("```Player not in a game```");
             }
             else
             {
@@ -47,7 +54,7 @@ namespace DiscordBot
                 string str = gametime.ToString(@"mm\:ss");
                 string Name = string.Format("{0} is in a {1} game", LoLSummonerModel.name, LoLCurrentGame.gameMode);
                 string GameTime = string.Format("In game for: {0}", str);
-                await ReplyAsync(":"+"\n"+Name+"\n"+GameTime);
+                await ReplyAsync($"```{Name}\n{GameTime}```");
             }
         }
     }
