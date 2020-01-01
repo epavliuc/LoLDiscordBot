@@ -20,20 +20,26 @@ namespace DiscordBot
         [Summary("Gives details of LoL player")]
         public async Task Player([Remainder]string query)
         {         
-            var LoLSummonerModel = await Methods.LoLSummonerAsync(query);
-            
+            var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(query);
+            var LoLLeagueEntry = await AsyncCalls.LoLSummonerEntryAsync(LoLSummonerModel.id);
+            var LoLTftEntry = await AsyncCalls.LoLTftEntryAsync(LoLSummonerModel.id);
+
+            string Level = string.Format("Level: {0}", LoLSummonerModel.summonerLevel); 
+
             if (LoLSummonerModel == null)
             {
                 await ReplyAsync("```No such player```");
+            }else if(LoLLeagueEntry.Count==0)
+            {
+                await ReplyAsync($"```{Level} with no ranked history```");
             }
             else
             {
-                var LoLLeagueEntry = await Methods.LoLSummonerEntryAsync(LoLSummonerModel.id);
-                string Level = string.Format("Level: {0}", LoLSummonerModel.summonerLevel);
                 string SoloRank = string.Format("Solo Rank: {0} {1}", LoLLeagueEntry[1].tier, LoLLeagueEntry[1].rank);
                 string FlexRank = string.Format("Flex Rank: {0} {1}", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank);
+                string TftRank = string.Format("Tft Rank: {0} {1}", LoLTftEntry[0].tier, LoLTftEntry[0].rank);
 
-                await ReplyAsync($"```{Level}\n{SoloRank}\n{FlexRank}```");
+                await ReplyAsync($"```{Level}\n{SoloRank}\n{FlexRank}\n{TftRank}```");
             }
         }
 
@@ -41,8 +47,8 @@ namespace DiscordBot
         [Summary("Gives details if player is playing")]
         public async Task Current([Remainder] string query)
         {
-            var LoLSummonerModel = await Methods.LoLSummonerAsync(query);
-            var LoLCurrentGame = await Methods.LoLCurrentGameAsync(LoLSummonerModel.id);
+            var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(query);
+            var LoLCurrentGame = await AsyncCalls.LoLCurrentGameAsync(LoLSummonerModel.id);
          
             if (LoLCurrentGame == null)
             {

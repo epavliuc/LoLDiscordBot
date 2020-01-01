@@ -211,7 +211,7 @@
   <ItemGroup>
     <Compile Include="CommandHandle.cs" />
     <Compile Include="CommandModules.cs" />
-    <Compile Include="Methods.cs" />
+    <Compile Include="AsyncCalls.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

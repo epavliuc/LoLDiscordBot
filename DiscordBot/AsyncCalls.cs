@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace DiscordBot
 {
-    public static class Methods
+    public static class AsyncCalls
     {
         public static async Task<LoLSummonerModel> LoLSummonerAsync(string name)
         {
@@ -46,6 +46,24 @@ namespace DiscordBot
                     return await Task.FromResult<List<LoLLeagueEntryModel>>(null);
                 }
                 
+            }
+        }
+
+        public static async Task<List<LoLTftModel>> LoLTftEntryAsync(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("X-Riot-Token", ApiConfig.ApiKey);
+                try
+                {
+                    var content = await client.GetStringAsync(ApiConfig.TftApiUrl + id);
+                    return JsonConvert.DeserializeObject<List<LoLTftModel>>(content);
+                }
+                catch
+                {
+                    return await Task.FromResult<List<LoLTftModel>>(null);
+                }
+
             }
         }
 
