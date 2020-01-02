@@ -18,14 +18,14 @@ namespace DiscordBot
         [Summary("Gives details of LoL player")]
         public async Task Player([Remainder]string query)
         {
-            await ReplyAsync(AsyncTasks.showPlayer(query).Result);
+            await ReplyAsync(AsyncTasks.ShowPlayer(query).Result);
         }
 
         [Command("current",RunMode = RunMode.Async)]
         [Summary("Gives details if player is playing")]
         public async Task Current([Remainder] string query)
         {
-            await ReplyAsync(AsyncTasks.showCurrent(query).Result);
+            await ReplyAsync(AsyncTasks.ShowCurrent(query).Result);
         }
     }
 }
