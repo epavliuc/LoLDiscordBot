@@ -11,16 +11,16 @@ namespace DiscordBot
         public static async Task<string> ShowPlayer(string query)
         {
             var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(query);
-            var LoLLeagueEntry = await AsyncCalls.LoLSummonerEntryAsync(LoLSummonerModel.id);
-            var LoLTftEntry = await AsyncCalls.LoLTftEntryAsync(LoLSummonerModel.id);
-
-            string Level = string.Format("Level: {0}", LoLSummonerModel.summonerLevel);
-
             if (LoLSummonerModel == null)
             {
                 return("```No such player```");
             }
-            else if (LoLLeagueEntry.Count == 0)
+
+            string Level = string.Format("Level: {0}", LoLSummonerModel.summonerLevel);
+            var LoLLeagueEntry = await AsyncCalls.LoLSummonerEntryAsync(LoLSummonerModel.id);
+            var LoLTftEntry = await AsyncCalls.LoLTftEntryAsync(LoLSummonerModel.id);
+
+            if (LoLLeagueEntry.Count == 0)
             {
                 if (LoLTftEntry.Count == 0)
                 {
@@ -28,6 +28,23 @@ namespace DiscordBot
                 }
                 string TftRank = string.Format("Tft Rank: {0} {1} {2}% Win Rate", LoLTftEntry[0].tier, LoLTftEntry[0].rank, WinRate(LoLTftEntry[0].wins, LoLTftEntry[0].losses));
                 return $"```{Level}\n{TftRank}\nWith no ranked history```";
+            }else if(LoLLeagueEntry.Count == 1)
+            {
+                if (LoLTftEntry.Count == 0)
+                {
+                    if (LoLLeagueEntry[0].queueType == "RANKED_SOLO_5x5")
+                    {
+                        string SoloRank = string.Format("Solo Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank, WinRate(LoLLeagueEntry[0].wins, LoLLeagueEntry[0].losses));
+                        return $"```{Level}\n{SoloRank}\nNo Flex history\nNo Tft history```";
+                    }
+                    else if(LoLLeagueEntry[0].queueType != "RANKED_SOLO_5x5")
+                    {
+                        string FlexRank = string.Format("Solo Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank, WinRate(LoLLeagueEntry[0].wins, LoLLeagueEntry[0].losses));
+                        return $"```{Level}\n{FlexRank}\nNo Solo history\nNo Tft history```";
+                    }
+                    return $"```{Level}\n With no ranked or tft history```";
+                }
+                return "";
             }
             else
             {
@@ -45,8 +62,12 @@ namespace DiscordBot
         public static async Task<string> ShowCurrent(string query)
         {
             var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(query);
-            var LoLCurrentGame = await AsyncCalls.LoLCurrentGameAsync(LoLSummonerModel.id);
+            if (LoLSummonerModel == null)
+            {
+                return ("```No such player```");
+            }
 
+            var LoLCurrentGame = await AsyncCalls.LoLCurrentGameAsync(LoLSummonerModel.id);
             if (LoLCurrentGame == null)
             {
                 return("```Player not in a game```");
