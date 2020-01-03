@@ -18,7 +18,14 @@ namespace DiscordBot
         [Summary("Gives details of LoL player")]
         public async Task Player([Remainder]string query)
         {
-            await ReplyAsync(AsyncTasks.ShowPlayer(query).Result);
+            await ReplyAsync(AsyncTasks.ShowPlayer(query).Result+AsyncTasks.OpGG(query));
+        }
+
+        [Command("top", RunMode = RunMode.Async)]
+        [Summary("Gives details of top played champs(by mastery)")]
+        public async Task Top([Remainder] string query)
+        {
+            await ReplyAsync(query);
         }
 
         [Command("current",RunMode = RunMode.Async)]
