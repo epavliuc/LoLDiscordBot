@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LolApiDll.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -100,6 +101,28 @@ namespace DiscordBot
                 string GameTime = string.Format("In game for: {0}", str);
                 return ($"```{Name}\n{GameTime}```");
             }
+        }
+
+        public static async Task<List<string>> TopChamps(string query)
+        {
+            string[] querylist = query.Split(' ');
+            int nrOfChamps = Int32.Parse(querylist[0]);
+            var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(querylist[1]);
+            var lolMasteryModel = await AsyncCalls.LoLMasteryAsync(LoLSummonerModel.id);
+            var lolChampionModel = await AsyncCalls.LoLChampionAsync();
+
+            lolMasteryModel.OrderBy(o => o.championPoints).ToList();
+
+            List<string> champId= new List<string>();
+            List<string> champName = new List<string>();
+
+            for (int i = nrOfChamps-1; i >= 0; i--)
+            {
+                champId.Add(lolMasteryModel[i].championPoints.ToString());
+            }
+
+            return champId;
+
         }
 
         public static string OpGG(string query)

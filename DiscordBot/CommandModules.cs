@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
 using LoLApiDLL.DataModels;
@@ -25,7 +27,11 @@ namespace DiscordBot
         [Summary("Gives details of top played champs(by mastery)")]
         public async Task Top([Remainder] string query)
         {
-            await ReplyAsync(query);
+            List<string> result = new List<string>();
+            result = AsyncTasks.TopChamps(query).Result;
+            result.Reverse();
+            string joinedResult = result.Aggregate((a, b) => a + "\n" + b);
+            await ReplyAsync($"```{joinedResult} ```");
         }
 
         [Command("current",RunMode = RunMode.Async)]

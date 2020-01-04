@@ -83,5 +83,37 @@ namespace DiscordBot
                 }
             }
         }
+
+        public static async Task<List<LoLMasteryModel>> LoLMasteryAsync(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("X-Riot-Token", ApiConfig.ApiKey);
+                try
+                {
+                    var content = await client.GetStringAsync(ApiConfig.MasteryApiUrl + id);
+                    return JsonConvert.DeserializeObject<List<LoLMasteryModel>>(content);
+                }
+                catch
+                {
+                    return await Task.FromResult<List<LoLMasteryModel>>(null);
+                }
+            }
+        }
+        public static async Task<LoLChampionModel> LoLChampionAsync()
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var content = await client.GetStringAsync("http://ddragon.leagueoflegends.com/cdn/9.24.2/data/en_US/champion.json");
+                    return JsonConvert.DeserializeObject<LoLChampionModel>(content);
+                }
+                catch
+                {
+                    return await Task.FromResult<LoLChampionModel>(null);
+                }
+            }
+        }
     }
 }
