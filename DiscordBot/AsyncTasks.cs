@@ -107,36 +107,50 @@ namespace DiscordBot
         {
             string[] querylist = query.Split(' ');
             int nrOfChamps = Int32.Parse(querylist[0]);
-            var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(querylist[1]);
-            var lolMasteryModel = await AsyncCalls.LoLMasteryAsync(LoLSummonerModel.id);
-            var lolChampionModel = await AsyncCalls.LoLChampionAsync();
-
-            
-            lolMasteryModel.OrderBy(o => o.championPoints).ToList();
-
-            Dictionary<string,string> champId= new Dictionary<string, string>();
-            List<string> champName = new List<string>();
-            Dictionary<int, string> endResult = new Dictionary<int, string>();
-
-
-            for (int i = 0; nrOfChamps-1 >= i; i++)
+            List<string> endResult = new List<string>();
+            if (nrOfChamps >= 1 && nrOfChamps <= 10)
             {
-                champId.Add(lolMasteryModel[i].championId.ToString(), lolMasteryModel[i].championPoints.ToString());
-            }
-
-            foreach (var champion in lolChampionModel.data.Values)
-            {
-                if (champId.ContainsKey(champion.key))
+                var LoLSummonerModel = await AsyncCalls.LoLSummonerAsync(querylist[1]);
+                if (LoLSummonerModel == null)
                 {
-                    endResult.Add(Int32.Parse(champId[champion.key]), champion.name);
+                    endResult.Add("No such player");
+                    return endResult;
                 }
+                var lolMasteryModel = await AsyncCalls.LoLMasteryAsync(LoLSummonerModel.id);
+                var lolChampionModel = await AsyncCalls.LoLChampionAsync();
+
+
+                lolMasteryModel.OrderBy(o => o.championPoints).ToList();
+
+                Dictionary<string, string> champId = new Dictionary<string, string>();
+
+                Dictionary<int, string> pointsNames = new Dictionary<int, string>();
+
+
+                for (int i = 0; nrOfChamps - 1 >= i; i++)
+                {
+                    champId.Add(lolMasteryModel[i].championId.ToString(), lolMasteryModel[i].championPoints.ToString());
+                }
+
+                foreach (var champion in lolChampionModel.data.Values)
+                {
+                    if (champId.ContainsKey(champion.key))
+                    {
+                        pointsNames.Add(Int32.Parse(champId[champion.key]), champion.name);
+                    }
+                }
+                SortedDictionary<int, string> sortedEndResult = new SortedDictionary<int, string>(pointsNames);
+                foreach (var x in sortedEndResult)
+                {
+                    endResult.Add($"Name:{x.Value} Points:{String.Format("{0:##,#}", x.Key)}");
+                }
+                return endResult;
             }
-            SortedDictionary<int, string> sortedEndResult = new SortedDictionary<int, string>(endResult);
-            foreach(var x in sortedEndResult)
+            else
             {
-                champName.Add($"Name:{x.Value} Points:{String.Format("{0:##,#}", x.Key)}");
+                endResult.Add("Max 10 champs plz");
+                return endResult;
             }
-            return champName;
 
         }
 
