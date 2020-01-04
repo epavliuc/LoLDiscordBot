@@ -111,17 +111,26 @@ namespace DiscordBot
             var lolMasteryModel = await AsyncCalls.LoLMasteryAsync(LoLSummonerModel.id);
             var lolChampionModel = await AsyncCalls.LoLChampionAsync();
 
+            
             lolMasteryModel.OrderBy(o => o.championPoints).ToList();
 
             List<string> champId= new List<string>();
             List<string> champName = new List<string>();
 
+
             for (int i = nrOfChamps-1; i >= 0; i--)
             {
-                champId.Add(lolMasteryModel[i].championPoints.ToString());
+                champId.Add(lolMasteryModel[i].championId.ToString());
             }
 
-            return champId;
+            foreach (var champion in lolChampionModel.data.Values)
+            {
+                if (champId.Contains(champion.key))
+                {
+                    champName.Add($"Name:{champion.name}");
+                }
+            }
+            return champName;
 
         }
 
