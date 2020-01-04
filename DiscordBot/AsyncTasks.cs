@@ -114,21 +114,27 @@ namespace DiscordBot
             
             lolMasteryModel.OrderBy(o => o.championPoints).ToList();
 
-            List<string> champId= new List<string>();
+            Dictionary<string,string> champId= new Dictionary<string, string>();
             List<string> champName = new List<string>();
+            Dictionary<int, string> endResult = new Dictionary<int, string>();
 
 
-            for (int i = nrOfChamps-1; i >= 0; i--)
+            for (int i = 0; nrOfChamps-1 >= i; i++)
             {
-                champId.Add(lolMasteryModel[i].championId.ToString());
+                champId.Add(lolMasteryModel[i].championId.ToString(), lolMasteryModel[i].championPoints.ToString());
             }
 
             foreach (var champion in lolChampionModel.data.Values)
             {
-                if (champId.Contains(champion.key))
+                if (champId.ContainsKey(champion.key))
                 {
-                    champName.Add($"Name:{champion.name}");
+                    endResult.Add(Int32.Parse(champId[champion.key]), champion.name);
                 }
+            }
+            SortedDictionary<int, string> sortedEndResult = new SortedDictionary<int, string>(endResult);
+            foreach(var x in sortedEndResult)
+            {
+                champName.Add($"Name:{x.Value} Points:{String.Format("{0:##,#}", x.Key)}");
             }
             return champName;
 
