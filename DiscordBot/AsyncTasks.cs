@@ -69,8 +69,17 @@ namespace DiscordBot
             }
             else
             {
-                SoloRank = string.Format("Solo Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[1].tier, LoLLeagueEntry[1].rank, WinRate(LoLLeagueEntry[1].wins, LoLLeagueEntry[1].losses));
-                FlexRank = string.Format("Flex Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank, WinRate(LoLLeagueEntry[0].wins, LoLLeagueEntry[0].losses));
+                if(LoLLeagueEntry[0].queueType != "RANKED_SOLO_5x5")
+                {
+                    SoloRank = string.Format("Solo Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[1].tier, LoLLeagueEntry[1].rank, WinRate(LoLLeagueEntry[1].wins, LoLLeagueEntry[1].losses));
+                    FlexRank = string.Format("Flex Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank, WinRate(LoLLeagueEntry[0].wins, LoLLeagueEntry[0].losses));
+                }
+                else
+                {
+                    SoloRank = string.Format("Solo Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[0].tier, LoLLeagueEntry[0].rank, WinRate(LoLLeagueEntry[0].wins, LoLLeagueEntry[0].losses));
+                    FlexRank = string.Format("Flex Rank: {0} {1} {2}% Win Rate", LoLLeagueEntry[1].tier, LoLLeagueEntry[1].rank, WinRate(LoLLeagueEntry[1].wins, LoLLeagueEntry[1].losses));
+                }
+               
                 if (LoLTftEntry.Count == 0)
                 {
                     return $"```{Level}\n{SoloRank}\n{FlexRank}\nWith no tft history```";
