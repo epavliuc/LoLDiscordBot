@@ -16,11 +16,11 @@ namespace DiscordBot
             await ReplyAsync("idi nahui");
         }
 
-        [Command("player",RunMode = RunMode.Async)]
+        [Command("player", RunMode = RunMode.Async)]
         [Summary("Gives details of LoL player")]
         public async Task Player([Remainder]string query)
         {
-            await ReplyAsync(AsyncTasks.ShowPlayer(query).Result+AsyncTasks.OpGG(query));
+            await ReplyAsync(AsyncTasks.ShowPlayer(query).Result + AsyncTasks.OpGG(query));
         }
 
         [Command("top", RunMode = RunMode.Async)]
@@ -34,11 +34,19 @@ namespace DiscordBot
             await ReplyAsync($"```{joinedResult} ```");
         }
 
-        [Command("current",RunMode = RunMode.Async)]
+        [Command("current", RunMode = RunMode.Async)]
         [Summary("Gives details if player is playing")]
         public async Task Current([Remainder] string query)
         {
             await ReplyAsync(AsyncTasks.ShowCurrent(query).Result);
+        }
+
+        [Command("help")]
+        [Summary("Displays the commands")]
+        public async Task Help()
+        {
+            string commands = $"```?blet\n?player [name]\n?current [name]\n?top [nr] [name]```";
+            await ReplyAsync(commands);
         }
     }
 }
