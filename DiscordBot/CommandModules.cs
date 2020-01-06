@@ -41,12 +41,22 @@ namespace DiscordBot
             await ReplyAsync(AsyncTasks.ShowCurrent(query).Result);
         }
 
+        [Command("champion", RunMode = RunMode.Async)]
+        [Summary("Displays information about champions")]
+        public async Task Champion([Remainder] string query)
+        {
+            string result = AsyncTasks.ShowChampion(query).Result;
+            await ReplyAsync($"```{result}```");
+        }
+
         [Command("help")]
         [Summary("Displays the commands")]
         public async Task Help()
         {
-            string commands = $"```?blet\n?player [name]\n?current [name]\n?top [nr] [name]```";
+            string commands = $"```?player [name]\n?current [name]\n?top [nr] [name]```";
             await ReplyAsync(commands);
         }
+
+
     }
 }

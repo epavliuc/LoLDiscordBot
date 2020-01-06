@@ -168,6 +168,33 @@ namespace DiscordBot
             }
         }
 
+        public static async Task<string>ShowChampion(string query)
+        {
+            string input = UppercaseFirst(query);
+            var lolChampionModel = await AsyncCalls.LoLChampionAsync();
+            Dictionary<string, Champion> championDictionary = lolChampionModel.data;
+            var sC = new Champion();
+            try
+            {
+                sC = championDictionary[input];
+            }
+            catch
+            {
+                return "Wrong input, sorry";
+            }
+
+            string result;
+
+            result = 
+                $"Name:{sC.id}\n" +
+                $"{UppercaseFirst(sC.title)}\n" +
+                $"{sC.tags[0]},{sC.tags[1]}\n" +
+                $"Stats\n" +
+                $"HP = {sC.stats.hp}";
+            
+            return result;
+        }
+
         //gives you a functional op.gg link
         public static string OpGG(string query)
         {
@@ -175,10 +202,21 @@ namespace DiscordBot
         }
 
         //calculate win percentage
-        public static double WinRate(double Wins, double Losses)
+        static double WinRate(double Wins, double Losses)
         {
             double result = (Wins / (Wins + Losses)) * 100;
             return Math.Round(result, 1);
+        }
+
+        static string UppercaseFirst(string s)
+        {
+            // Check for empty string.
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
+            // Return char and concat substring.
+            return char.ToUpper(s[0]) + s.Substring(1);
         }
     }
 }
